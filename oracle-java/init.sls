@@ -1,4 +1,4 @@
-{%- from 'sun-java/settings.sls' import java with context %}
+{%- from 'oracle-java/settings.sls' import java with context %}
 
 # require a source_url - there is no default download location for a jdk
 {%- if java.source_url is defined %}

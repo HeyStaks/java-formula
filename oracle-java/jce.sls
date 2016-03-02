@@ -1,9 +1,9 @@
-{%- from 'sun-java/settings.sls' import java with context %}
+{%- from 'oracle-java/settings.sls' import java with context %}
 
 {%- if java.jce_url is defined %}
 
 include:
-  - sun-java
+  - oracle-java
 
 unzip:
   pkg.installed
