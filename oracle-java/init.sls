@@ -1,26 +1,37 @@
 {%- from 'oracle-java/settings.sls' import java with context %}
 
-# require a source_url - there is no default download location for a jdk
-{%- if java.source_url is defined %}
+curl:
+  pkg.installed: []
 
-{{ java.prefix }}:
-  file.directory:
-    - user: root
-    - group: root
-    - mode: 755
-    - makedirs: True
-
-unpack-jdk-tarball:
+jdk-tarball:
   cmd.run:
     - name: curl {{ java.dl_opts }} '{{ java.source_url }}' | tar xz --no-same-owner
     - cwd: {{ java.prefix }}
-    - unless: test -d {{ java.java_real_home }}
+    - unless: test -d {{ java.java_home }}
     - require:
-      - file: {{ java.prefix }}
-  alternatives.install:
-    - name: java-home-link
-    - link: {{ java.java_home }}
-    - path: {{ java.java_real_home }}
-    - priority: 30
+      - pkg: curl
 
-{%- endif %}
+jdk-intall-alternatives:
+  alternatives.install:
+    - name: java
+    - link: /usr/bin/java
+    - path: {{ java.java_home }}/bin/java
+    - priority: 50
+    - require:
+      - cmd: jdk-tarball
+
+jdk-set-alternatives:
+  alternatives.set:
+    - name: java
+    - path: {{ java.java_home }}/bin/java
+
+jdk-profile:
+  file.managed:
+    - name: /etc/profile.d/java.sh
+    - source: salt://oracle-java/java.sh
+    - template: jinja
+    - mode: 644
+    - user: root
+    - group: root
+    - context:
+      java_home: {{ java.java_home }}
