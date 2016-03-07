@@ -23,7 +23,7 @@ jdk-intall-alternatives:
     - name: java
     - link: /usr/bin/java
     - path: {{ java.java_home }}/bin/java
-    - priority: 50
+    - priority: 2000
     - require:
       - cmd: jdk-tarball
 
