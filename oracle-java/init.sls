@@ -1,7 +1,14 @@
 {%- from 'oracle-java/settings.sls' import java with context %}
 
-curl:
+curl-package:
   pkg.installed: []
+
+java-prefix-folder:
+  file.directory:
+    - name: /usr/lib/java
+    - mode: 755
+    - user: root
+    - group: root
 
 jdk-tarball:
   cmd.run:
