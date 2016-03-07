@@ -1,6 +1,6 @@
 {%- from 'oracle-java/settings.sls' import java with context %}
 
-curl-package:
+curl:
   pkg.installed: []
 
 java-prefix-folder:
