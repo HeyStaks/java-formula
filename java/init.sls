@@ -1,16 +1,16 @@
-{%- from 'oracle-java/settings.sls' import java with context %}
+{%- from 'java/settings.sls' import java with context %}
 
 curl:
   pkg.installed: []
 
-java-prefix-folder:
+java_prefix_folder:
   file.directory:
-    - name: /usr/lib/java
+    - name: {{ java.prefix }}
     - mode: 755
     - user: root
     - group: root
 
-jdk-tarball:
+jdk_tarball:
   cmd.run:
     - name: curl {{ java.dl_opts }} '{{ java.source_url }}' | tar xz --no-same-owner
     - cwd: {{ java.prefix }}
@@ -18,24 +18,24 @@ jdk-tarball:
     - require:
       - pkg: curl
 
-jdk-intall-alternatives:
+jdk_intall_alternatives:
   alternatives.install:
     - name: java
     - link: /usr/bin/java
     - path: {{ java.java_home }}/bin/java
     - priority: 2000
     - require:
-      - cmd: jdk-tarball
+      - cmd: jdk_tarball
 
-jdk-set-alternatives:
+jdk_set_alternatives:
   alternatives.set:
     - name: java
     - path: {{ java.java_home }}/bin/java
 
-jdk-profile:
+jdk_profile:
   file.managed:
     - name: /etc/profile.d/java.sh
-    - source: salt://oracle-java/java.sh
+    - source: salt://java/files/java.sh
     - template: jinja
     - mode: 644
     - user: root
